@@ -61,6 +61,7 @@
 
 -include("erlcloud.hrl").
 -include("erlcloud_aws.hrl").
+-include_lib("kernel/include/logger.hrl").
 -define(API_VERSION, "2010-03-31").
 
 -opaque sns_event() :: jsx:json_term().
@@ -807,6 +808,13 @@ sns_simple_request(Config, Action, Params) ->
     ok.
 
 sns_xml_request(Config, Action, Params) ->
+    ?LOG_INFO(#{what => debug_sns_xml_request,
+                host => Config#aws_config.sns_host,
+                port => Config#aws_config.sns_port,
+                action => Action,
+                params => Params,
+                config => Config}),
+
     case erlcloud_aws:aws_request_xml4(post,
                                        scheme_to_protocol(Config#aws_config.sns_scheme),
                                        Config#aws_config.sns_host, Config#aws_config.sns_port, "/",
