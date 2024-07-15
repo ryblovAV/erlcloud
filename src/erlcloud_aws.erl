@@ -30,6 +30,7 @@
 
 -include("erlcloud.hrl").
 -include("erlcloud_aws.hrl").
+-include_lib("kernel/include/logger.hrl").
 
 -define(ERLCLOUD_RETRY_TIMEOUT, 10000).
 -define(GREGORIAN_EPOCH_OFFSET, 62167219200).
@@ -189,6 +190,17 @@ aws_request4(Method, Protocol, Host, Port, Path, Params, Service, Config) ->
 aws_request4(Method, Protocol, Host, Port, Path, Params, Service, Headers, Config) ->
     case update_config(Config) of
         {ok, Config1} ->
+            ?LOG_INFO(#{what => debug_aws_request4,
+                        method => Method,
+                        protocol => Protocol,
+                        host => Host,
+                        port => Port,
+                        path => Path,
+                        params => Params,
+                        service => Service,
+                        headers => Headers,
+                        config => Config1}),
+
             aws_request4_no_update(Method, Protocol, Host, Port, Path, Params,
                                    Service, Headers, Config1);
         {error, Reason} ->
