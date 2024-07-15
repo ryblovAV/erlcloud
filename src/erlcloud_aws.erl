@@ -296,7 +296,15 @@ do_aws_request_form_raw(Method, Scheme, Host, Port, Path, Form, Headers, QuerySt
     %% Note: httpc MUST be used with {timeout, timeout()} option
     %%       Many timeout related failures is observed at prod env
     %%       when library is used in 24/7 manner
+    ?LOG_INFO(#{what => debug_do_aws_request_form_raw,
+                config => Config,
+                aws_request => AwsRequest}),    
     Response = erlcloud_retry:request(Config, AwsRequest, ResultFun),
+    ?LOG_INFO(#{what => debug_do_aws_request_form_raw_resp,
+                config => Config,
+                aws_request => AwsRequest,
+                response => Response}),    
+
 
     show_headers(ShowRespHeaders, request_to_return(Response)).
 

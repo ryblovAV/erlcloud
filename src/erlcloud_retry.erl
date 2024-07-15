@@ -16,6 +16,7 @@
 
 -include("erlcloud.hrl").
 -include("erlcloud_aws.hrl").
+-include_lib("kernel/include/logger.hrl").
 
 %% Helpers
 -export([backoff/1,
@@ -92,6 +93,11 @@ request_and_retry(Config, ResultFun, {retry, Request}, MaxAttempts) ->
     Request2 = Request#aws_request{attempt = Attempt + 1},
     RetryFun = Config#aws_config.retry,
     ResponseTypeFun = Config#aws_config.retry_response_type,
+    ?LOG_INFO(#{what => debug_request_and_retry,
+                uri => URI,
+                method => Method,
+                headers => Headers,
+                body => Body}),
     Rsp = erlcloud_httpc:request(URI, Method, Headers, Body,
         erlcloud_aws:get_timeout(Config), Config),
     case Rsp of
